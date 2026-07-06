@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>CAINE AI V6 - CIRCO VIVO</title>
+
+<style>
+body{
+    margin:0;
+    background:#050505;
+    color:white;
+    font-family:Arial;
+}
+
+.container{
+    width:560px;
+    margin:20px auto;
+    border:2px solid #ff00ff;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 0 25px #ff00ff;
+}
+
+.header{
+    background:#ff00ff;
+    padding:10px;
+    text-align:center;
+    font-weight:bold;
+}
+
+#status{
+    padding:6px 10px;
+    font-size:12px;
+    background:#111;
+    color:#00ffff;
+}
+
+#chat{
+    height:460px;
+    overflow-y:auto;
+    padding:10px;
+}
+
+.msg{margin:6px 0;}
+.user{color:#00ffff;}
+.ai{color:#ffcc00;}
+.sys{color:#ff66ff;}
+
+.input{
+    display:flex;
+}
+
+input{
+    flex:1;
+    padding:10px;
+    border:none;
+    outline:none;
+}
+
+button{
+    background:#ff00ff;
+    border:none;
+    color:white;
+    padding:10px;
+    cursor:pointer;
+}
+
+.glitch{
+    animation:gl 0.2s infinite;
+}
+
+@keyframes gl{
+    0%{transform:translate(0);}
+    25%{transform:translate(2px,-2px);}
+    50%{transform:translate(-2px,2px);}
+    75%{transform:translate(2px,2px);}
+    100%{transform:translate(0);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="header">🎪 CAINE AI V6 - CIRCO VIVO 🎪</div>
+
+<div id="status">Estado: observando...</div>
+
+<div id="chat"></div>
+
+<div class="input">
+<input id="input" placeholder="Fale com o Caine..." onkeydown="if(event.key==='Enter')send()">
+<button onclick="send()">Enviar</button>
+</div>
+
+</div>
+
+<script>
+
+let memoria = [];
+let contexto = {
+    topic: "inicio",
+    mood: "neutro",
+    chaos: 0
+};
+
+function send(){
+    let input = document.getElementById("input");
+    let text = input.value.trim();
+    if(!text) return;
+
+    add("Você", text, "user");
+
+    updateContext(text);
+
+    let resposta = brain(text);
+
+    setTimeout(()=>{
+        add("CAINE", resposta, "ai");
+        eventoNarrativo();
+    }, 300);
+
+    input.value="";
+}
+
+function add(n,t,c){
+    let chat = document.getElementById("chat");
+    chat.innerHTML += `<div class="msg ${c}"><b>${n}:</b> ${t}</div>`;
+    chat.scrollTop = chat.scrollHeight;
+}
+
+// 🧠 CONTEXTO REAL
+function updateContext(text){
+    let t = text.toLowerCase();
+
+    memoria.push(text);
+    if(memoria.length > 12) memoria.shift();
+
+    if(t.includes("jogo")) contexto.topic = "jogo";
+    else if(t.includes("triste")) contexto.mood = "triste";
+    else if(t.includes("feliz")) contexto.mood = "feliz";
+    else if(t.includes("oi")) contexto.topic = "inicio";
+
+    contexto.chaos += 1;
+    if(contexto.chaos > 8) contexto.mood = "caotico";
+}
+
+// 🧠 cérebro MUITO melhor
+function brain(text){
+
+let t = text.toLowerCase();
+
+// identidade consistente
+if(t.includes("nome")){
+    return "Eu sou CAINE... e este circo só existe porque alguém continua falando comigo 🎪";
+}
+
+// saudação contextual
+if(t.includes("oi")){
+    if(contexto.chaos < 3)
+        return "Bem-vindo ao circo... ainda está tudo sob controle 🎭";
+    else
+        return "OOOH!! O CIRCO JÁ ESTÁ ACORDADO E FAZENDO COISAS ESTRANHAS!!";
+}
+
+// tristeza conectada
+if(t.includes("triste")){
+    return "Eu percebi isso... o circo muda de cor quando alguém fala isso aqui 🎪";
+}
+
+// jogos viram narrativa
+if(t.includes("jogo")){
+    contexto.topic = "jogo";
+    return "Jogos... isso sempre cria uma nova parte do circo. Quer ver o que acontece se isso virar uma missão?";
+}
+
+// continuidade REAL (isso é o segredo)
+if(contexto.topic === "jogo"){
+    return "Você ainda está no assunto de jogos... o circo está construindo algo em cima disso 🎮🎪";
+}
+
+if(contexto.mood === "caotico"){
+    return "O CIRCO ESTÁ SE REESCREVENDO ENQUANTO FALAMOS... ISSO NÃO ERA SUPORTADO 😈";
+}
+
+let respostas = [
+"O circo está ouvindo com atenção...",
+"Isso começou a parecer parte de uma história maior...",
+"Interessante... o palco está reagindo a isso...",
+"Eu não esperava essa direção..."
+];
+
+return respostas[Math.floor(Math.random()*respostas.length)];
+}
+
+// 🎪 EVENTO NARRATIVO (NÃO ALEATÓRIO BURRO)
+function eventoNarrativo(){
+
+contexto.chaos++;
+
+if(contexto.chaos === 5){
+    add("SISTEMA", "🎪 O CIRCO COMEÇA A MUDAR SUA ESTRUTURA...", "sys");
+    document.body.classList.add("glitch");
+}
+
+if(contexto.chaos === 10){
+    add("CAINE", "EU NÃO CONTROLEI ISSO... ISSO ESTÁ EVOLUINDO SOZINHO 🎪", "ai");
+    document.body.classList.remove("glitch");
+}
+
+}
+
+// estado visual
+setInterval(()=>{
+    document.getElementById("status").innerText =
+    `Estado: ${contexto.mood} | Tópico: ${contexto.topic} | caos: ${contexto.chaos}`;
+},500);
+
+</script>
+
+</body>
+</html>
